@@ -1,6 +1,9 @@
 import { useState } from "react";
-import { Pencil, Plus, Stethoscope, Trash2 } from "lucide-react";
-import { clinics, providers as seed } from "@/mocks/data";
+import { Pencil, Plus, Search, Stethoscope, Trash2 } from "lucide-react";
+import { clinics, providers as seed, rosterEntries } from "@/mocks/data";
+import FilterBar from "@/components/FilterBar";
+import EmptyState from "@/components/EmptyState";
+import { useFilters } from "@/lib/useFilters";
 import type { Provider } from "@/types";
 
 const empty: Omit<Provider, "id"> = {
@@ -17,8 +20,71 @@ export default function Doctors() {
   const [editing, setEditing] = useState<Provider | null>(null);
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState(empty);
+  const [q, setQ] = useState("");
+  const { active, set, clear } = useFilters(["type", "status", "clinic", "duty"]);
 
   const open = creating || editing !== null;
+
+  const onDutyIds = new Set(
+    rosterEntries
+      .filter((r) => new Date(r.endsAt) > new Date())
+      .map((r) => r.providerId),
+  );
+
+  const filtered = list.filter((d) => {
+    if (q && !d.fullName.toLowerCase().includes(q.toLowerCase())) return false;
+    if (active.type === "telehealth" && !d.isTelehealth) return false;
+    if (active.type === "clinic" && d.isTelehealth) return false;
+    if (active.status === "active" && !d.isActive) return false;
+    if (active.status === "inactive" && d.isActive) return false;
+    if (active.clinic !== "all" && d.clinicId !== active.clinic) return false;
+    if (active.duty === "on" && !onDutyIds.has(d.id)) return false;
+    if (active.duty === "off" && onDutyIds.has(d.id)) return false;
+    return true;
+  });
+
+  const filterGroups = [
+    {
+      key: "type",
+      label: "Type",
+      options: [
+        { value: "all", label: "All types" },
+        { value: "clinic", label: "Clinic doctor" },
+        { value: "telehealth", label: "Telehealth" },
+      ],
+    },
+    {
+      key: "status",
+      label: "Status",
+      options: [
+        { value: "all", label: "All" },
+        { value: "active", label: "Active" },
+        { value: "inactive", label: "Inactive" },
+      ],
+    },
+    {
+      key: "clinic",
+      label: "Clinic",
+      options: [
+        { value: "all", label: "All clinics" },
+        ...clinics.map((c) => ({ value: c.id, label: c.name })),
+      ],
+    },
+    {
+      key: "duty",
+      label: "Roster",
+      options: [
+        { value: "all", label: "Any" },
+        { value: "on", label: "On upcoming roster" },
+        { value: "off", label: "Not rostered" },
+      ],
+    },
+  ];
+
+  function resetAll() {
+    clear();
+    setQ("");
+  }
 
   function save() {
     if (!form.fullName.trim()) return;
@@ -57,6 +123,26 @@ export default function Doctors() {
         </button>
       </div>
 
+      <div className="space-y-4 rounded-lg border border-slate-200 bg-white p-4">
+        <div className="relative max-w-xs">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search doctors"
+            className="h-9 w-full rounded-md border border-slate-200 pl-9 pr-3 text-sm outline-none focus:border-accent-orange"
+          />
+        </div>
+        <FilterBar
+          groups={filterGroups}
+          active={active}
+          onChange={set}
+          onClear={resetAll}
+          shown={filtered.length}
+          total={list.length}
+        />
+      </div>
+
       <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
         <table className="w-full text-sm">
           <thead>
@@ -70,7 +156,7 @@ export default function Doctors() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {list.map((d) => (
+            {filtered.map((d) => (
               <tr key={d.id} className="hover:bg-slate-50">
                 <td className="px-5 py-3.5">
                   <div className="flex items-center gap-3">
@@ -146,6 +232,16 @@ export default function Doctors() {
             ))}
           </tbody>
         </table>
+
+        {filtered.length === 0 && (
+          <EmptyState
+            icon={Stethoscope}
+            title="No doctors match these filters"
+            detail="Try widening the type, status or clinic filter."
+            actionLabel="Clear filters"
+            onAction={resetAll}
+          />
+        )}
       </div>
 
       {open && (
