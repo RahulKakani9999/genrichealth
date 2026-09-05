@@ -17,9 +17,9 @@ export const users: User[] = [
     id: "u1",
     email: "admin@genrichealth.com.au",
     password: "admin123",
-    name: "Sarah Whitfield",
+    name: "Rahul Kakani",
     role: "admin",
-    initials: "SW",
+    initials: "RK",
     jobTitle: "Platform Administrator",
   },
   {

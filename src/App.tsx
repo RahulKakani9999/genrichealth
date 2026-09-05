@@ -13,6 +13,7 @@ import AppShell from "@/components/layout/AppShell";
 import type { NavItem } from "@/components/layout/Sidebar";
 import Login from "@/pages/Login";
 import AdminDashboard from "@/pages/admin/Dashboard";
+import Clinics from "@/pages/admin/Clinics";
 import type { Role } from "@/types";
 
 const adminNav: NavItem[] = [
@@ -73,7 +74,7 @@ export default function App() {
             }
           >
             <Route index element={<AdminDashboard />} />
-            <Route path="clinics" element={<Stub title="Clinics" />} />
+            <Route path="clinics" element={<Clinics />} />
             <Route path="doctors" element={<Stub title="Doctors" />} />
             <Route path="roster" element={<Stub title="On-call roster" />} />
             <Route path="calls" element={<Stub title="Calls" />} />
