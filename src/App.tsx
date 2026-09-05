@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import AppShell from "@/components/layout/AppShell";
+import Doctors from "@/pages/admin/Doctors";
+import Calls from "@/pages/admin/Calls";
 import type { NavItem } from "@/components/layout/Sidebar";
 import Login from "@/pages/Login";
 import AdminDashboard from "@/pages/admin/Dashboard";
@@ -75,9 +77,9 @@ export default function App() {
           >
             <Route index element={<AdminDashboard />} />
             <Route path="clinics" element={<Clinics />} />
-            <Route path="doctors" element={<Stub title="Doctors" />} />
+            <Route path="doctors" element={<Doctors />} />
             <Route path="roster" element={<Stub title="On-call roster" />} />
-            <Route path="calls" element={<Stub title="Calls" />} />
+            <Route path="calls" element={<Calls />} />
             <Route path="payments" element={<Stub title="Payments" />} />
             <Route path="patients" element={<Stub title="Patients" />} />
           </Route>
