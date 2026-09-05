@@ -1,7 +1,9 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import {
   Building2,
+  CalendarCheck,
   CalendarClock,
+  ClipboardList,
   CreditCard,
   LayoutDashboard,
   PhoneCall,
@@ -16,6 +18,9 @@ import type { NavItem } from "@/components/layout/Sidebar";
 import Login from "@/pages/Login";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import Clinics from "@/pages/admin/Clinics";
+import DoctorDashboard from "@/pages/doctor/Dashboard";
+import DoctorAvailability from "@/pages/doctor/Availability";
+import Consultations from "@/pages/doctor/Consultations";
 import type { Role } from "@/types";
 
 const adminNav: NavItem[] = [
@@ -26,6 +31,12 @@ const adminNav: NavItem[] = [
   { label: "Calls", to: "/admin/calls", icon: PhoneCall },
   { label: "Payments", to: "/admin/payments", icon: CreditCard },
   { label: "Patients", to: "/admin/patients", icon: Users },
+];
+
+const doctorNav: NavItem[] = [
+  { label: "Dashboard", to: "/doctor", icon: LayoutDashboard },
+  { label: "Consultations", to: "/doctor/consultations", icon: ClipboardList },
+  { label: "Availability", to: "/doctor/availability", icon: CalendarCheck },
 ];
 
 function Guard({ role, children }: { role: Role; children: React.ReactNode }) {
@@ -88,10 +99,14 @@ export default function App() {
             path="/doctor"
             element={
               <Guard role="doctor">
-                <SimplePortal title="Doctor Portal" />
+                <AppShell nav={doctorNav} />
               </Guard>
             }
-          />
+          >
+            <Route index element={<DoctorDashboard />} />
+            <Route path="consultations" element={<Consultations />} />
+            <Route path="availability" element={<DoctorAvailability />} />
+          </Route>
           <Route
             path="/patient"
             element={
