@@ -19,6 +19,9 @@ import Login from "@/pages/Login";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import Clinics from "@/pages/admin/Clinics";
 import DoctorDashboard from "@/pages/doctor/Dashboard";
+import Roster from "@/pages/admin/Roster";
+import Payments from "@/pages/admin/Payments";
+import Patients from "@/pages/admin/Patients";
 import DoctorAvailability from "@/pages/doctor/Availability";
 import Consultations from "@/pages/doctor/Consultations";
 import type { Role } from "@/types";
@@ -44,15 +47,6 @@ function Guard({ role, children }: { role: Role; children: React.ReactNode }) {
   if (!user) return <Navigate to="/login" replace />;
   if (user.role !== role) return <Navigate to={`/${user.role}`} replace />;
   return <>{children}</>;
-}
-
-function Stub({ title }: { title: string }) {
-  return (
-    <div className="rounded-lg border border-dashed border-slate-300 bg-white p-12 text-center">
-      <h1 className="text-lg font-semibold text-slate-900">{title}</h1>
-      <p className="mt-1 text-sm text-slate-500">This screen is next up.</p>
-    </div>
-  );
 }
 
 function SimplePortal({ title }: { title: string }) {
@@ -88,11 +82,11 @@ export default function App() {
           >
             <Route index element={<AdminDashboard />} />
             <Route path="clinics" element={<Clinics />} />
+            <Route path="roster" element={<Roster />} />
+            <Route path="payments" element={<Payments />} />
+            <Route path="patients" element={<Patients />} />
             <Route path="doctors" element={<Doctors />} />
-            <Route path="roster" element={<Stub title="On-call roster" />} />
             <Route path="calls" element={<Calls />} />
-            <Route path="payments" element={<Stub title="Payments" />} />
-            <Route path="patients" element={<Stub title="Patients" />} />
           </Route>
 
           <Route
