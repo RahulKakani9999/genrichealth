@@ -128,3 +128,10 @@
     @apply font-sans;
     }
 }
+@theme {
+  --color-brand: #0f2f5c;
+  --color-brand-dark: #0a1f3d;
+  --color-brand-light: #1c4a86;
+  --color-accent-orange: #ff6a13;
+  --color-accent-orange-soft: #fff1e8;
+}
